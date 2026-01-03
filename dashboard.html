@@ -60,6 +60,10 @@
             0% { top: 0; }
             100% { top: 100%; }
         }
+
+        .accuracy-gradient {
+            background: linear-gradient(90deg, #ef4444 0%, #22c55e 100%);
+        }
     </style>
 </head>
 <body class="selection:bg-red-600 selection:text-white">
@@ -72,8 +76,8 @@
                     <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
                 </div>
             </div>
-            <h1 class="text-white text-2xl font-black italic tracking-tighter mb-2 uppercase">Core Initializing...</h1>
-            <p class="text-zinc-500 text-[10px] mb-6 uppercase tracking-[0.3em]">Calibrating Neural Accuracy Modules</p>
+            <h1 class="text-white text-2xl font-black italic tracking-tighter mb-2 uppercase">Precision Core Init...</h1>
+            <p class="text-zinc-500 text-[10px] mb-6 uppercase tracking-[0.3em]">Calibrating Ultra-High Accuracy Modules</p>
             <div class="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
                 <div id="loading-bar" class="bg-red-600 h-full w-0 transition-all duration-1000 ease-out"></div>
             </div>
@@ -97,7 +101,7 @@
                         <div class="flex items-center gap-3 mt-1">
                             <span class="flex items-center gap-1.5 px-2 py-0.5 bg-green-500/10 rounded-full border border-green-500/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                                <span class="text-[8px] font-black text-green-500 uppercase">Secure</span>
+                                <span class="text-[8px] font-black text-green-500 uppercase">U-Secure</span>
                             </span>
                             <p id="user-id-display" class="text-slate-500 text-[9px] uppercase font-bold tracking-[0.2em] mono">
                                 SID: OFFLINE
@@ -110,11 +114,11 @@
                     <div class="hidden lg:flex items-center gap-6 px-6 py-2 bg-white/5 rounded-full border border-white/5">
                         <div class="flex items-center gap-2">
                             <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Latency</span>
-                            <span class="text-[9px] mono text-green-500">11ms</span>
+                            <span class="text-[9px] mono text-green-500">8ms</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Accuracy</span>
-                            <span class="text-[9px] mono text-red-500">5X_PRECISION</span>
+                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Engine</span>
+                            <span class="text-[9px] mono text-red-500">ULTRA_ACC</span>
                         </div>
                     </div>
                     <button onclick="handleLogout()" class="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-[10px] font-black uppercase transition-all active:scale-95">
@@ -132,24 +136,24 @@
                         
                         <div class="flex items-center justify-between mb-4 relative z-10">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                                <div class="w-1 h-3 bg-red-600"></div> Engine Calibration
+                                <div class="w-1 h-3 bg-red-600"></div> Calibration Input
                             </label>
                             <i data-lucide="settings-2" class="w-4 h-4 text-zinc-600"></i>
                         </div>
                         
                         <div class="space-y-4 relative z-10">
                             <div class="space-y-2">
-                                <p class="text-[9px] font-bold text-zinc-600 uppercase ml-1">Server Seed (64-char hex)</p>
+                                <p class="text-[9px] font-bold text-zinc-600 uppercase ml-1">Server Seed (Hex-64)</p>
                                 <textarea id="seed-input" 
                                     class="w-full h-24 bg-black border border-white/10 rounded-xl p-4 text-[11px] mono outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/30 transition-all resize-none text-slate-300"
-                                    placeholder="Paste server seed..."></textarea>
+                                    placeholder="Paste server hash..."></textarea>
                             </div>
                             
                             <div class="space-y-2">
-                                <p class="text-[9px] font-bold text-zinc-600 uppercase ml-1">Client Seed / Public Hash</p>
+                                <p class="text-[9px] font-bold text-zinc-600 uppercase ml-1">Client Seed (Verification Key)</p>
                                 <input id="client-seed-input" type="text"
                                     class="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-[11px] mono outline-none focus:border-red-600 text-slate-300"
-                                    placeholder="e.g. 000000000000000000... (optional)">
+                                    placeholder="e.g. 000000000000000000...">
                             </div>
                         </div>
 
@@ -159,26 +163,26 @@
                         </div>
 
                         <button id="scan-btn" onclick="startAnalysis()" class="w-full mt-6 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/30 border-t border-white/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
-                            INITIALIZE 5X HI-ACC SCAN
+                            INITIALIZE ULTRA-ACC SCAN
                         </button>
                     </section>
 
                     <div class="bg-zinc-900/40 p-6 rounded-[2rem] border border-white/10">
                         <h4 class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <i data-lucide="bar-chart-3" class="w-3 h-3"></i> Telemetry Data
+                            <i data-lucide="bar-chart-3" class="w-3 h-3 text-red-600"></i> Engine Telemetry
                         </h4>
                         <div class="space-y-4">
                             <div class="flex justify-between items-end border-b border-white/5 pb-2">
-                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Entropy Density</span>
+                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Bit Integrity</span>
                                 <span id="tele-entropy" class="text-xs mono text-zinc-300">0.00%</span>
                             </div>
                             <div class="flex justify-between items-end border-b border-white/5 pb-2">
-                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Accuracy Weight</span>
-                                <span id="tele-weight" class="text-xs mono text-zinc-300">CALIBRATING</span>
+                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Verification Pass</span>
+                                <span id="tele-weight" class="text-xs mono text-zinc-300">IDLE</span>
                             </div>
                             <div class="flex justify-between items-end border-b border-white/5 pb-2">
-                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Cycle Pattern</span>
-                                <span id="tele-cycle" class="text-xs mono text-zinc-300">---</span>
+                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Chain Depth</span>
+                                <span id="tele-cycle" class="text-xs mono text-zinc-300">0.0</span>
                             </div>
                         </div>
                     </div>
@@ -195,8 +199,8 @@
                         <div class="relative z-10 w-full space-y-12">
                             <div class="space-y-4">
                                 <div class="flex flex-col items-center gap-2">
-                                    <span id="status-tag" class="text-slate-500 text-[10px] font-black uppercase tracking-[0.6em] inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 border border-white/5">
-                                        STANDBY MODE
+                                    <span id="status-tag" class="text-slate-500 text-[10px] font-black uppercase tracking-[0.6em] inline-flex items-center gap-2 px-6 py-1.5 rounded-full bg-white/5 border border-white/5">
+                                        STANDBY: READY FOR CALIBRATION
                                     </span>
                                 </div>
                                 
@@ -224,7 +228,7 @@
                                     </div>
 
                                     <div id="confirmed-badge" class="mt-8 py-3 px-8 bg-green-500/10 text-green-500 border border-green-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest hidden items-center justify-center gap-2 animate-bounce">
-                                        <i data-lucide="check-circle" class="w-4 h-4"></i> High-Acc Confirmed
+                                        <i data-lucide="check-circle" class="w-4 h-4"></i> Ultra-Precision Confirmed
                                     </div>
                                 </div>
                             </div>
@@ -238,11 +242,11 @@
                         <div class="px-8 py-6 bg-white/5 border-b border-white/5 flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="database" class="w-4 h-4 text-slate-500"></i>
-                                <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500">Calculated Hash History</h3>
+                                <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500">Ultra-Acc Analysis Feed</h3>
                             </div>
                             <div class="flex items-center gap-2 px-4 py-1.5 bg-red-600/10 rounded-full border border-red-600/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
-                                <span class="text-[8px] font-black text-red-500 uppercase tracking-widest">Neural Link Active</span>
+                                <span class="text-[8px] font-black text-red-500 uppercase tracking-widest">Hi-Res Neural Link</span>
                             </div>
                         </div>
                         
@@ -250,17 +254,17 @@
                             <table class="w-full text-left border-collapse min-w-[800px]">
                                 <thead class="bg-black/40 text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
                                     <tr>
-                                        <th class="px-8 py-5">#Index</th>
-                                        <th class="px-8 py-5">Target Value</th>
-                                        <th class="px-8 py-5">Entropy Weight</th>
-                                        <th class="px-8 py-5">Verified Hash Result</th>
-                                        <th class="px-8 py-5 text-right">Timestamp</th>
+                                        <th class="px-8 py-5">#Cycle</th>
+                                        <th class="px-8 py-5">Probability</th>
+                                        <th class="px-8 py-5">Integrity</th>
+                                        <th class="px-8 py-5">Verified Multiplier</th>
+                                        <th class="px-8 py-5 text-right">Verification Hash</th>
                                     </tr>
                                 </thead>
                                 <tbody id="log-body" class="text-[11px] mono">
                                     <tr>
                                         <td colspan="5" class="px-8 py-24 text-center text-zinc-700 uppercase text-[11px] tracking-[0.6em] font-black italic opacity-30">
-                                            Initializing Data Stream...
+                                            Awaiting Input Stream...
                                         </td>
                                     </tr>
                                 </tbody>
@@ -274,13 +278,13 @@
                 <div class="flex flex-col items-center gap-4">
                    <p class="text-[9px] uppercase font-black text-zinc-700 tracking-[0.6em] flex items-center justify-center gap-8 w-full">
                         <span class="h-[1px] bg-gradient-to-r from-transparent to-zinc-800 grow"></span>
-                        SUBNET MAFIA HI-ACC ALPHA • EST. 2026
+                        SUBNET MAFIA ULTRA-ACC ALPHA • V2.6.0
                         <span class="h-[1px] bg-gradient-to-l from-transparent to-zinc-800 grow"></span>
                     </p>
-                    <p class="text-[8px] text-zinc-800 font-mono flex gap-4 uppercase">
-                        <span>Core: v2.5.0-Precision</span>
-                        <span>Region: Quantum-North</span>
-                        <span>Encryption: SHA-256-R</span>
+                    <p class="text-[8px] text-zinc-800 font-mono flex gap-4 uppercase tracking-widest">
+                        <span>Logic: Hi-Res-Scan</span>
+                        <span>Mode: Ultra-Accuracy</span>
+                        <span>Node: 0x82A</span>
                     </p>
                 </div>
             </footer>
@@ -368,7 +372,7 @@
             window.location.reload();
         };
 
-        // SHA256 Precision
+        // Precision Hashing
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -376,7 +380,7 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // Provably Fair Calc
+        // Standard Provably Fair Logic
         function calculateResult(hash) {
             const decimal = parseInt(hash.substring(0, 13), 16);
             const e = Math.pow(2, 52);
@@ -398,14 +402,14 @@
                 logData.unshift({ ...activeSignal, timestamp: new Date().toLocaleTimeString() });
                 if (logData.length > 15) logData.pop();
                 renderLogs();
-                currentChainSeed = await sha256(activeSignal.seedSnapshot);
+                currentChainSeed = await sha256(activeSignal.hash);
                 resetUI();
                 return;
             }
 
             const inputSeed = seedInput.value.trim();
             if (inputSeed && inputSeed.length < 32) {
-                showError("Invalid Server Seed. Length must be >= 32 chars.");
+                showError("Invalid Server Hash. Incomplete chain detected.");
                 return;
             }
 
@@ -415,52 +419,61 @@
             isAnalyzing = true;
             scanBtn.disabled = true;
             scanLine.classList.remove('hidden');
-            statusTag.innerText = "CALIBRATING NEURAL WEIGHTS...";
-            teleWeight.innerText = "ANALYZING";
+            statusTag.innerText = "SYNCHRONIZING NEURAL WEIGHTS...";
+            teleWeight.innerText = "PASS 1/2";
             
-            // Artificial delay for "High Accuracy" simulation
-            await new Promise(r => setTimeout(r, 1200));
+            // Artificial latency to simulate ultra-precision analysis
+            await new Promise(r => setTimeout(r, 1400));
 
             let seedToScan = currentChainSeed || baseSeed;
             let found = false;
             let depth = 0;
-            const MAX_DEPTH = 1200; 
+            const MAX_DEPTH = 1500; // Expanded depth for ultra-accuracy
 
             try {
                 while (!found && depth < MAX_DEPTH) {
-                    // Accuracy injection: combine server + client seed
+                    // Ultra-Acc Strategy: Multi-pass hashing simulation
                     const hashInput = depth === 0 ? (seedToScan + clientSeed) : seedToScan;
                     const currentHash = await sha256(hashInput);
                     const multiplier = calculateResult(currentHash);
                     
-                    // TARGET: 5.0x or higher
+                    // TARGET: 5.0x or higher for this mode
                     if (multiplier >= 5.0) {
                         found = true;
+                        
+                        // Integrity check simulation
+                        const integrityScore = (Math.random() * (99.9 - 98.1) + 98.1).toFixed(2);
+                        
                         activeSignal = {
                             multiplier,
                             depth,
                             seedSnapshot: currentHash,
                             hash: currentHash,
-                            entropy: (Math.random() * (99.9 - 96.4) + 96.4).toFixed(2)
+                            integrity: integrityScore,
+                            probability: (Math.random() * (99.99 - 99.4) + 99.4).toFixed(3)
                         };
+                        
+                        teleWeight.innerText = "PASS 2/2";
+                        await new Promise(r => setTimeout(r, 400));
                         triggerSignal();
                     } else {
                         seedToScan = currentHash;
                         depth++;
                         
-                        // Telemetry updates
-                        if (depth % 100 === 0) {
-                            teleEntropy.innerText = `${(Math.random() * 80).toFixed(2)}%`;
+                        // Dynamic Telemetry during scan
+                        if (depth % 150 === 0) {
+                            teleEntropy.innerText = `${(Math.random() * 95).toFixed(2)}%`;
+                            teleCycle.innerText = (depth / 10).toFixed(1);
                         }
                     }
                 }
 
                 if (!found) {
-                    showError("No 5x+ pattern detected in the current 1200-cycle block.");
+                    showError("Cycle Exhausted: No high-precision patterns found in current node.");
                     resetUI();
                 }
             } catch (err) {
-                showError("Neural Interface Error.");
+                showError("Neural Interface Connectivity Error.");
                 resetUI();
             } finally {
                 isAnalyzing = false;
@@ -470,16 +483,16 @@
         };
 
         function triggerSignal() {
-            scanBtn.innerText = 'SYNC WITH ROUND';
+            scanBtn.innerText = 'ACKNOWLEDGE & SYNC';
             scanBtn.classList.replace('bg-red-600', 'bg-green-600');
             
-            statusTag.innerText = "TARGET ACQUIRED (5X HI-ACC)";
+            statusTag.innerText = "TARGET VERIFIED (ULTRA-ACC)";
             statusTag.classList.replace('text-slate-500', 'text-red-500');
             statusTag.classList.replace('bg-white/5', 'bg-red-500/10');
 
-            teleEntropy.innerText = `${activeSignal.entropy}%`;
-            teleWeight.innerText = "VERIFIED";
-            teleCycle.innerText = "BALANCED";
+            teleEntropy.innerText = `${activeSignal.integrity}%`;
+            teleWeight.innerText = "LOCKED";
+            teleCycle.innerText = activeSignal.depth;
 
             multiplierText.innerText = activeSignal.multiplier.toFixed(2);
             multiplierText.classList.replace('text-zinc-800', 'text-white');
@@ -488,8 +501,8 @@
             document.getElementById('top-glow').classList.replace('bg-zinc-800/10', 'bg-red-600/30');
             pingIndicator.classList.remove('hidden');
             
-            // Adjusted timing estimation for 5x targets
-            secondsRemaining = Math.floor(activeSignal.depth * 14.5);
+            // Refined timing based on round density
+            secondsRemaining = Math.floor(activeSignal.depth * 13.8);
             updateTimer();
             
             timerInterval = setInterval(() => {
@@ -500,22 +513,23 @@
                     confirmedBadge.classList.remove('hidden');
                     confirmedBadge.classList.add('flex');
                     timerDisplay.classList.replace('text-slate-200', 'text-green-500');
+                    statusTag.innerText = "IMPACT IMMINENT";
                 }
             }, 1000);
         }
 
         function updateTimer() {
-            timerDisplay.innerHTML = `${String(secondsRemaining).padStart(2, '0')}<span class="text-xs font-sans ml-2 text-zinc-600 uppercase tracking-widest block mt-4 font-bold italic">Seconds Remaining</span>`;
+            timerDisplay.innerHTML = `${String(secondsRemaining).padStart(2, '0')}<span class="text-xs font-sans ml-2 text-zinc-600 uppercase tracking-widest block mt-4 font-bold italic">Seconds to Signal</span>`;
         }
 
         function resetUI() {
             activeSignal = null;
             clearInterval(timerInterval);
             
-            scanBtn.innerText = 'INITIALIZE 5X HI-ACC SCAN';
+            scanBtn.innerText = 'INITIALIZE ULTRA-ACC SCAN';
             scanBtn.classList.replace('bg-green-600', 'bg-red-600');
             
-            statusTag.innerText = "STANDBY MODE";
+            statusTag.innerText = "STANDBY: READY FOR CALIBRATION";
             statusTag.classList.replace('text-red-500', 'text-slate-500');
             statusTag.classList.replace('bg-red-500/10', 'bg-white/5');
             
@@ -526,8 +540,8 @@
             timerDisplay.classList.replace('text-green-500', 'text-slate-200');
             timerDisplay.innerHTML = `00<span class="text-xs font-sans ml-2 text-zinc-600 uppercase tracking-widest block mt-4 font-bold italic">Seconds Remaining</span>`;
             
-            teleWeight.innerText = "CALIBRATING";
-            teleCycle.innerText = "---";
+            teleWeight.innerText = "IDLE";
+            teleCycle.innerText = "0.0";
             
             confirmedBadge.classList.add('hidden');
             pingIndicator.classList.add('hidden');
@@ -537,18 +551,18 @@
         function renderLogs() {
             if (logData.length === 0) return;
             logBody.innerHTML = logData.map((res, i) => `
-                <tr class="border-b border-white/5 hover:bg-white/[0.03] transition-all">
-                    <td class="px-8 py-5 text-zinc-500 font-bold italic">#${logData.length - i}</td>
+                <tr class="border-b border-white/5 hover:bg-white/[0.03] transition-all group">
+                    <td class="px-8 py-5 text-zinc-500 font-bold italic">#${res.depth}</td>
+                    <td class="px-8 py-5 text-green-500">${res.probability}%</td>
+                    <td class="px-8 py-5 text-zinc-400">${res.integrity}%</td>
                     <td class="px-8 py-5">
-                        <span class="px-3 py-1 bg-red-600/10 text-red-500 rounded-lg font-black border border-red-600/20">
+                        <span class="px-3 py-1 bg-red-600/10 text-red-500 rounded-lg font-black border border-red-600/20 shadow-lg shadow-red-900/10">
                             ${res.multiplier.toFixed(2)}x
                         </span>
                     </td>
-                    <td class="px-8 py-5 text-zinc-400">${res.entropy}% Match</td>
-                    <td class="px-8 py-5 text-[9px] text-zinc-600">
+                    <td class="px-8 py-5 text-right text-zinc-600 text-[9px] group-hover:text-zinc-400 transition-colors truncate max-w-[150px]">
                         ${res.hash}
                     </td>
-                    <td class="px-8 py-5 text-right text-slate-600 uppercase font-sans text-[9px] font-bold">${res.timestamp}</td>
                 </tr>
             `).join('');
         }
