@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUBNET MAFIA AVIATOR HACK</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #020202; overflow-x: hidden; }
+        @keyframes glow {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.1); }
+        }
+        .animate-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        /* Custom scrollbar for history */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef } = React;
+
+        const App = () => {
+            const [serverSeed, setServerSeed] = useState('d2ff64abc5e35fcd38b5e7487facf7c92893030a4e56a2a9a21e77f03958bcfe');
+            const [currentChainSeed, setCurrentChainSeed] = useState('');
+            const [results, setResults] = useState([]);
+            const [isAnalyzing, setIsAnalyzing] = useState(false);
+            const [activeSignal, setActiveSignal] = useState(null);
+            const [secondsRemaining, setSecondsRemaining] = useState(0);
+            const timerRef = useRef(null);
+
+            useEffect(() => {
+                if (window.lucide) window.lucide.createIcons();
+            });
+
+            const sha256 = async (message) => {
+                const msgBuffer = new TextEncoder().encode(message);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            };
+
+            const calculateResult = (hash) => {
+                const decimal = parseInt(hash.substring(0, 13), 16);
+                const e = Math.pow(2, 52);
+                let result = (e / (e - decimal));
+                const finalResult = Math.max(1.00, result * 0.99);
+                return Math.floor(finalResult * 100) / 100;
+            };
+
+            const analyzeSeedChain = useCallback(async () => {
+                setIsAnalyzing(true);
+                let seedToScan = currentChainSeed || serverSeed;
+                let found = false;
+                let chainDepth = 0;
+                
+                while (!found && chainDepth < 300) {
+                    const currentHash = await sha256(seedToScan);
+                    const multiplier = calculateResult(currentHash);
+                    
+                    if (multiplier >= 5.0) {
+                        if (timerRef.current) clearInterval(timerRef.current);
+                        const initialSeconds = chainDepth * 15;
+                        setActiveSignal({ multiplier, depth: chainDepth, seedSnapshot: seedToScan });
+                        setSecondsRemaining(initialSeconds);
+                        found = true;
+                    } else {
+                        seedToScan = currentHash;
+                        chainDepth++;
+                    }
+                }
+                setIsAnalyzing(false);
+            }, [currentChainSeed, serverSeed]);
+
+            useEffect(() => {
+                if (activeSignal && secondsRemaining > 0) {
+                    timerRef.current = setInterval(() => {
+                        setSecondsRemaining(prev => Math.max(0, prev - 1));
+                    }, 1000);
+                }
+                return () => clearInterval(timerRef.current);
+            }, [activeSignal, secondsRemaining]);
+
+            const useSignal = async () => {
+                if (!activeSignal) return;
+                setResults(prev => [{...activeSignal, timestamp: new Date().toLocaleTimeString()}, ...prev]);
+                const nextSeed = await sha256(activeSignal.seedSnapshot);
+                setCurrentChainSeed(nextSeed);
+                setActiveSignal(null);
+                setSecondsRemaining(0);
+            };
+
+            return (
+                <div className="min-h-screen bg-[#020202] text-slate-100 p-4 sm:p-6 md:p-8 font-sans transition-all duration-300">
+                    <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
+                        
+                        {/* Header */}
+                        <header className="flex flex-col sm:flex-row items-center justify-between border-b border-white/5 pb-6 sm:pb-8 gap-4 text-center sm:text-left">
+                            <div className="flex flex-col sm:flex-row items-center gap-4">
+                                <div className="p-3 sm:p-4 bg-red-600 rounded-2xl shadow-xl shadow-red-900/20">
+                                    <div className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-white font-bold text-xl sm:text-2xl">SM</div>
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase italic">
+                                        SUBNET <span className="text-red-600">MAFIA</span>
+                                    </h1>
+                                    <p className="text-slate-500 text-[9px] sm:text-[10px] uppercase font-bold tracking-[0.2em] mt-1">
+                                        SUBNET MAFIA CYBER GROUP
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-full border border-white/5">
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">System Sync: OK</span>
+                            </div>
+                        </header>
+
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
+                            
+                            {/* Input Column */}
+                            <div className="md:col-span-5 space-y-6">
+                                <div className="bg-white/5 p-5 sm:p-6 rounded-[2rem] border border-white/10 shadow-lg">
+                                    <label className="block text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest flex items-center gap-2">
+                                        <div className="w-1 h-3 bg-red-600"></div> Active Server Seed
+                                    </label>
+                                    <textarea 
+                                        className="w-full h-28 sm:h-32 bg-black border border-white/10 rounded-2xl p-4 text-xs font-mono outline-none focus:border-red-600 transition-all resize-none shadow-inner"
+                                        value={serverSeed}
+                                        onChange={(e) => setServerSeed(e.target.value)}
+                                        disabled={activeSignal}
+                                        placeholder="Paste SHA-256 seed here..."
+                                    />
+                                    <button 
+                                        onClick={activeSignal ? useSignal : analyzeSeedChain}
+                                        disabled={isAnalyzing}
+                                        className={`w-full mt-6 py-4 rounded-2xl font-black uppercase text-xs sm:text-sm tracking-[0.15em] transition-all transform active:scale-[0.98] ${
+                                            isAnalyzing ? 'bg-slate-800 text-slate-500 cursor-not-allowed' :
+                                            activeSignal ? 'bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-900/20' : 
+                                            'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/20'
+                                        }`}
+                                    >
+                                        {isAnalyzing ? "SCANNING CHAIN..." : activeSignal ? "FINISH & NEXT ROUND" : "CALCULATE 5X+ SIGNAL"}
+                                    </button>
+                                </div>
+
+                                {/* Mini Stats */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5 text-center">
+                                        <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Chain Gap</p>
+                                        <p className="text-xl font-black text-white">{activeSignal ? activeSignal.depth : '0'}</p>
+                                    </div>
+                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5 text-center">
+                                        <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">History</p>
+                                        <p className="text-xl font-black text-white">{results.length}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Main Display Column */}
+                            <div className="md:col-span-7">
+                                <div className="bg-white/5 p-6 sm:p-8 md:p-10 rounded-[2.5rem] border border-white/10 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl h-full min-h-[400px]">
+                                    {/* Decoration */}
+                                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-red-600/10 blur-3xl rounded-full"></div>
+                                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 blur-3xl rounded-full"></div>
+
+                                    <div className="relative z-10 w-full space-y-8">
+                                        <div className="space-y-2">
+                                            <span className="text-slate-500 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.5em]">Target Odd Prediction</span>
+                                            <div className="text-7xl sm:text-8xl md:text-[9rem] font-black italic leading-none tracking-tighter transition-all duration-500 scale-in flex items-center justify-center">
+                                                <span className={activeSignal ? 'text-white' : 'text-slate-800'}>
+                                                    {activeSignal ? activeSignal.multiplier.toFixed(2) : "0.00"}
+                                                </span>
+                                                <span className="text-red-600 text-3xl sm:text-4xl ml-2">X</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="w-full max-w-[280px] sm:max-w-sm mx-auto bg-black/40 rounded-3xl p-6 sm:p-8 border border-white/5 shadow-inner">
+                                            <div className="flex items-center justify-center gap-2 text-red-500 mb-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-red-600"></div>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.3em]">Seconds ET</span>
+                                            </div>
+                                            <div className={`text-6xl sm:text-7xl md:text-8xl font-black font-mono mt-1 transition-all duration-300 ${secondsRemaining === 0 && activeSignal ? 'text-green-500 animate-pulse' : 'text-white'}`}>
+                                                {activeSignal ? String(secondsRemaining).padStart(2, '0') : "00"}
+                                            </div>
+                                            {activeSignal && secondsRemaining === 0 && (
+                                                <div className="mt-4 px-4 py-1.5 bg-green-600/20 text-green-500 border border-green-500/30 rounded-full text-[9px] font-black uppercase tracking-[0.2em] inline-block animate-bounce">
+                                                    BET NOW START
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {/* History section for mobile/desktop */}
+                        {results.length > 0 && (
+                            <div className="bg-white/5 rounded-[2rem] border border-white/5 overflow-hidden shadow-xl">
+                                <div className="px-6 py-4 bg-white/5 border-b border-white/5 flex items-center justify-between">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Hit History Feed</h3>
+                                    <span className="text-[10px] font-mono text-slate-600 italic">verified logs</span>
+                                </div>
+                                <div className="max-h-48 overflow-y-auto custom-scroll">
+                                    <table className="w-full text-left border-collapse">
+                                        <tbody className="text-[11px] sm:text-xs font-mono">
+                                            {results.map((res, i) => (
+                                                <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                                                    <td className="px-6 py-4 text-slate-500">#{results.length - i}</td>
+                                                    <td className="px-6 py-4">
+                                                        <span className="text-red-500 font-bold">{res.multiplier.toFixed(2)}x</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-slate-600 text-[10px]">Gap: +{res.depth}</td>
+                                                    <td className="px-6 py-4 text-right text-slate-600 text-[10px]">{res.timestamp}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        <footer className="text-center pt-8 sm:pt-12 text-slate-700">
+                            <p className="text-[8px] sm:text-[9px] uppercase font-bold tracking-[0.3em]">
+                                FOR BUY +94716344483
+                            </p>
+                        </footer>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
