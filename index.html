@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>SUBNET MAFIA | SECURE ACCESS</title>
     
     <!-- 
@@ -33,14 +33,18 @@
             background-color: #050505;
             color: #ffffff;
             font-family: ui-sans-serif, system-ui, sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
             /* Disable user selection to prevent easy copying */
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .bg-grid {
             background-image: linear-gradient(to right, #111 1px, transparent 1px),
                               linear-gradient(to bottom, #111 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-size: 30px 30px;
+        }
+        @media (min-width: 768px) {
+            .bg-grid { background-size: 40px 40px; }
         }
         .scanline {
             position: fixed;
@@ -48,39 +52,35 @@
             background: linear-gradient(to bottom, transparent, rgba(220, 38, 38, 0.05), transparent);
             animation: scanline 8s linear infinite;
             pointer-events: none;
+            z-index: 50;
         }
         .glass-panel {
-            background: rgba(15, 15, 15, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .btn-glow:hover {
             animation: pulse-glow 2s infinite;
         }
+        /* Custom scrollbar for the modal */
+        .modal-scroll::-webkit-scrollbar { width: 4px; }
+        .modal-scroll::-webkit-scrollbar-track { background: transparent; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 10px; }
     </style>
 
     <script>
         /**
          * ANTI-INSPECTION GUARD
-         * Disables common developer shortcuts and detects console opening
          */
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = function(e) {
-            if (e.keyCode == 123) return false; // F12
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
-            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source)
+            if (e.keyCode == 123) return false; 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; 
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
         };
-
-        // Detect if DevTools is open by checking the window size threshold
-        const threshold = 160;
-        setInterval(() => {
-            if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
-                // If user opens console, we can clear the page or redirect
-                // console.clear(); 
-            }
-        }, 1000);
     </script>
 </head>
 <body>
@@ -93,7 +93,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Obfuscated config keys - though still public, it looks less inviting to casual scrapers
         const _0x4f12 = {
             k: "AIzaSyB5w_vWoPeojuP9qFZrfeS62vAS3Cg39go",
             d: "aviator-predictor-subnet-mafia.firebaseapp.com",
@@ -150,24 +149,26 @@
             };
 
             return (
-                <div className="min-h-screen relative flex items-center justify-center p-6 bg-grid">
+                <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 bg-grid overflow-hidden">
                     <div className="scanline"></div>
                     
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-900/10 blur-[120px] rounded-full"></div>
-                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-zinc-900/20 blur-[120px] rounded-full"></div>
+                    {/* Background Orbs - Repositioned for mobile safety */}
+                    <div className="absolute top-0 left-0 w-64 h-64 sm:w-96 sm:h-96 bg-red-900/10 blur-[80px] sm:blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+                    <div className="absolute bottom-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-zinc-900/20 blur-[80px] sm:blur-[120px] rounded-full translate-x-1/2 translate-y-1/2"></div>
 
-                    <div className="w-full max-w-[400px] glass-panel p-8 rounded-[2.5rem] shadow-2xl relative z-10 border-t border-white/10">
-                        <div className="flex justify-center mb-8">
-                            <div className="p-4 bg-red-600 rounded-2xl shadow-lg shadow-red-900/30">
-                                <Icon name="terminal" className="w-8 h-8 text-white" />
+                    {/* Main Login Card */}
+                    <div className="w-full max-w-[400px] glass-panel p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl relative z-10 border-t border-white/10">
+                        <div className="flex justify-center mb-6 sm:mb-8">
+                            <div className="p-3 sm:p-4 bg-red-600 rounded-xl sm:rounded-2xl shadow-lg shadow-red-900/30">
+                                <Icon name="terminal" className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                             </div>
                         </div>
 
-                        <div className="text-center mb-10">
-                            <h1 className="text-3xl font-black italic tracking-tighter mb-2">
+                        <div className="text-center mb-8 sm:mb-10">
+                            <h1 className="text-2xl sm:text-3xl font-black italic tracking-tighter mb-2">
                                 SUBNET <span className="text-red-600">MAFIA</span>
                             </h1>
-                            <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-[0.3em]">Encrypted Login Protocol</p>
+                            <p className="text-zinc-500 text-[9px] sm:text-[10px] uppercase font-bold tracking-[0.2em] sm:tracking-[0.3em]">Encrypted Login Protocol</p>
                         </div>
 
                         <form onSubmit={handleLogin} className="space-y-4">
@@ -179,7 +180,7 @@
                                     type="email" 
                                     required
                                     placeholder="Enter System ID (Email)"
-                                    className="w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all"
+                                    className="w-full bg-black/50 border border-white/5 rounded-xl sm:rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -193,7 +194,7 @@
                                     type="password" 
                                     required
                                     placeholder="System Access Key"
-                                    className="w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all"
+                                    className="w-full bg-black/50 border border-white/5 rounded-xl sm:rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-sm outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
@@ -202,40 +203,42 @@
                             {error && (
                                 <div className="p-3 bg-red-900/20 border border-red-500/20 rounded-xl flex items-center gap-2">
                                     <Icon name="alert-circle" className="w-4 h-4 text-red-500" />
-                                    <p className="text-[10px] text-red-400 font-bold uppercase">{error}</p>
+                                    <p className="text-[10px] text-red-400 font-bold uppercase leading-tight">{error}</p>
                                 </div>
                             )}
 
                             <button 
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-red-600 hover:bg-red-500 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] transition-all transform active:scale-[0.98] shadow-lg shadow-red-900/20 btn-glow"
+                                className="w-full bg-red-600 hover:bg-red-500 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black uppercase text-[11px] sm:text-xs tracking-[0.2em] transition-all transform active:scale-[0.98] shadow-lg shadow-red-900/20 btn-glow"
                             >
                                 {isLoading ? "Synchronizing..." : "Initialize Session"}
                             </button>
                         </form>
 
-                        <div className="mt-8 pt-8 border-t border-white/5 text-center">
+                        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-white/5 text-center">
                             <button 
                                 onClick={() => setShowModal(true)}
-                                className="text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 mx-auto transition-colors"
+                                className="text-zinc-500 hover:text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 mx-auto transition-colors py-2"
                             >
                                 <Icon name="shopping-cart" className="w-3 h-3" /> Get Access Key
                             </button>
                         </div>
                     </div>
 
+                    {/* Pricing Modal */}
                     {showModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
-                            <div className="w-full max-w-[420px] glass-panel rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-red-900/30">
-                                <div className="bg-red-600 p-6 flex items-center justify-between">
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+                            <div className="w-full max-w-[420px] max-h-[90vh] glass-panel rounded-[2rem] relative overflow-hidden shadow-2xl border border-red-900/30 flex flex-col animate-in fade-in zoom-in duration-200">
+                                {/* Modal Header - Fixed */}
+                                <div className="bg-red-600 p-5 sm:p-6 flex items-center justify-between shrink-0">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-white/10 rounded-lg">
                                             <Icon name="zap" className="w-4 h-4 text-white" />
                                         </div>
                                         <div className="text-left">
-                                            <h2 className="text-white font-black italic text-sm tracking-tighter uppercase">AVIATOR PREDICTOR V1.0</h2>
-                                            <p className="text-white/70 text-[8px] font-bold uppercase tracking-widest">පුරුදු වෙන්න හදන ඒවා..</p>
+                                            <h2 className="text-white font-black italic text-xs sm:text-sm tracking-tighter uppercase leading-none">AVIATOR PREDICTOR V1.0</h2>
+                                            <p className="text-white/70 text-[7px] sm:text-[8px] font-bold uppercase tracking-widest mt-1">පුරුදු වෙන්න හදන ඒවා..</p>
                                         </div>
                                     </div>
                                     <button onClick={() => setShowModal(false)} className="p-2 hover:bg-black/20 rounded-xl transition-colors">
@@ -243,48 +246,50 @@
                                     </button>
                                 </div>
 
-                                <div className="p-8 space-y-6">
+                                {/* Modal Body - Scrollable */}
+                                <div className="p-6 sm:p-8 space-y-6 overflow-y-auto modal-scroll">
                                     <div className="text-center">
-                                        <p className="text-red-500 font-black text-xs uppercase tracking-[0.3em] mb-1">99.9999% Accurate Signals!</p>
-                                        <p className="text-zinc-400 text-[10px] italic">Don't play luck, play logic.</p>
+                                        <p className="text-red-500 font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-1">99.9999% Accurate Signals!</p>
+                                        <p className="text-zinc-400 text-[9px] sm:text-[10px] italic">Don't play luck, play logic.</p>
                                     </div>
 
                                     <div className="space-y-2 font-mono text-center">
-                                        <p className="text-zinc-600 text-[8px] uppercase font-bold tracking-[0.5em] mb-4">━━━━━━━━ PREMIUM PRICE LIST ━━━━━━━━</p>
-                                        <div className="flex justify-between items-center px-4 py-2 bg-white/5 rounded-xl border border-white/5">
-                                            <span className="text-xs uppercase font-bold">1 Week</span>
+                                        <p className="text-zinc-600 text-[8px] uppercase font-bold tracking-[0.4em] mb-4">━━━━ PREMIUM PRICE LIST ━━━━</p>
+                                        <div className="flex justify-between items-center px-4 py-3 bg-white/5 rounded-xl border border-white/5">
+                                            <span className="text-[10px] sm:text-xs uppercase font-bold">1 Week</span>
                                             <span className="text-red-500 font-black">1,500/=</span>
                                         </div>
-                                        <div className="flex justify-between items-center px-4 py-2 bg-white/5 rounded-xl border border-white/5">
-                                            <span className="text-xs uppercase font-bold">2 Weeks</span>
+                                        <div className="flex justify-between items-center px-4 py-3 bg-white/5 rounded-xl border border-white/5">
+                                            <span className="text-[10px] sm:text-xs uppercase font-bold">2 Weeks</span>
                                             <span className="text-red-500 font-black">2,500/=</span>
                                         </div>
-                                        <div className="flex justify-between items-center px-4 py-2 bg-white/5 rounded-xl border border-white/5">
-                                            <span className="text-xs uppercase font-bold">1 Month</span>
+                                        <div className="flex justify-between items-center px-4 py-3 bg-white/5 rounded-xl border border-white/5">
+                                            <span className="text-[10px] sm:text-xs uppercase font-bold">1 Month</span>
                                             <span className="text-red-500 font-black">5,000/=</span>
                                         </div>
-                                        <div className="flex justify-between items-center px-4 py-2 bg-red-600/10 rounded-xl border border-red-600/20">
-                                            <span className="text-xs uppercase font-bold text-red-500">Lifetime</span>
+                                        <div className="flex justify-between items-center px-4 py-3 bg-red-600/10 rounded-xl border border-red-600/20">
+                                            <span className="text-[10px] sm:text-xs uppercase font-bold text-red-500">Lifetime</span>
                                             <span className="text-red-500 font-black">8,000/=</span>
                                         </div>
                                     </div>
 
-                                    <div className="bg-black/40 p-4 rounded-2xl border border-white/5 text-center text-[9px] uppercase font-bold text-zinc-300">
+                                    <div className="bg-black/40 p-4 rounded-xl sm:rounded-2xl border border-white/5 text-center text-[8px] sm:text-[9px] uppercase font-bold text-zinc-300 leading-relaxed">
                                         1XBET | MELBET | 888STARZ | WOW BET | COLD BET
                                     </div>
 
-                                    <div className="text-center space-y-4">
-                                        <a href="https://wa.me/94716344483" target="_blank" className="w-full bg-green-600 hover:bg-green-500 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg shadow-green-900/20 btn-glow">
+                                    <div className="text-center space-y-4 pt-2 pb-2">
+                                        <a href="https://wa.me/94716344483" target="_blank" className="w-full bg-green-600 hover:bg-green-500 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black uppercase text-[11px] sm:text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg shadow-green-900/20">
                                             <Icon name="message-circle" className="w-4 h-4" /> DM To Buy Now
                                         </a>
+                                        <p className="text-zinc-600 text-[8px] font-bold tracking-widest">+94 71 634 4483</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    <div className="fixed bottom-8 left-0 w-full text-center">
-                        <p className="text-[8px] font-black text-zinc-800 uppercase tracking-[0.5em]">Subnet Mafia Cyber Division • Unauthorized Access is Prohibited</p>
+                    <div className="fixed bottom-4 sm:bottom-8 left-0 w-full text-center px-4">
+                        <p className="text-[7px] sm:text-[8px] font-black text-zinc-800 uppercase tracking-[0.3em] sm:tracking-[0.5em] leading-relaxed">Subnet Mafia Cyber Division • Unauthorized Access is Prohibited</p>
                     </div>
                 </div>
             );
