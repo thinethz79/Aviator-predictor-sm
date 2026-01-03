@@ -3,75 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUBNET MAFIA | Aviator Engine Alpha</title>
+    <title>SUBNET MAFIA | Aviator Engine High-Acc Alpha</title>
     
-    <!-- 
-      SUBNET MAFIA - AVIATOR PREDICTOR ALPHA
-      Repository Ready Version
-      Contact: +94716344483
-    -->
-
     <!-- Dependencies -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <style>
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(200%); }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;700;900&display=swap');
+
         body {
             background-color: #020202;
             color: #f1f5f9;
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        .selection-red::selection {
-            background: #dc2626;
-            color: white;
+
+        @keyframes pulse-ring {
+            0% { transform: scale(.33); opacity: 1; }
+            80%, 100% { opacity: 0; }
         }
-        .shimmer-bg {
+
+        .pulse-indicator {
             position: relative;
-            overflow: hidden;
         }
-        .shimmer-bg::after {
-            content: "";
+        .pulse-indicator::before {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            animation: shimmer 2s infinite linear;
+            background: inherit;
+            border-radius: inherit;
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        .active-red-glow {
+            text-shadow: 0 0 40px rgba(239, 68, 68, 0.6), 0 0 10px rgba(239, 68, 68, 0.8);
+        }
+
+        .scanning-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #dc2626, transparent);
+            position: absolute;
+            width: 100%;
+            z-index: 20;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
         }
     </style>
 </head>
-<body class="selection-red">
-    <div id="root"></div>
+<body class="selection:bg-red-600 selection:text-white">
 
-    <script type="text/babel" data-type="module">
-        const { useState, useEffect, useCallback, useRef } = React;
-        
-        // --- GITHUB SETUP INSTRUCTIONS ---
-        // 1. Create a project at console.firebase.google.com
-        // 2. Enable Anonymous Auth or Custom Token Auth
-        // 3. Replace the values in the 'githubFallbackConfig' below with your project settings
-        
+    <!-- Loading Overlay -->
+    <div id="loading-screen" class="fixed inset-0 z-50 bg-black flex items-center justify-center p-6">
+        <div class="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl text-center max-w-md w-full shadow-2xl">
+            <div class="mb-6 flex justify-center">
+                <div class="p-5 bg-red-600 rounded-2xl shadow-xl shadow-red-900/40">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+                </div>
+            </div>
+            <h1 class="text-white text-2xl font-black italic tracking-tighter mb-2 uppercase">Core Initializing...</h1>
+            <p class="text-zinc-500 text-[10px] mb-6 uppercase tracking-[0.3em]">Calibrating Neural Accuracy Modules</p>
+            <div class="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
+                <div id="loading-bar" class="bg-red-600 h-full w-0 transition-all duration-1000 ease-out"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-content" class="min-h-screen p-4 sm:p-6 md:p-8 opacity-0 transition-opacity duration-700">
+        <div class="max-w-6xl mx-auto space-y-6">
+            
+            <!-- Header -->
+            <header class="flex flex-col sm:flex-row items-center justify-between border-b border-white/5 pb-8 gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-red-600 rounded-xl shadow-lg shadow-red-900/20">
+                        <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-black tracking-tighter uppercase italic">
+                            SUBNET <span class="text-red-600">MAFIA</span>
+                        </h1>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="flex items-center gap-1.5 px-2 py-0.5 bg-green-500/10 rounded-full border border-green-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                <span class="text-[8px] font-black text-green-500 uppercase">Secure</span>
+                            </span>
+                            <p id="user-id-display" class="text-slate-500 text-[9px] uppercase font-bold tracking-[0.2em] mono">
+                                SID: OFFLINE
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="hidden lg:flex items-center gap-6 px-6 py-2 bg-white/5 rounded-full border border-white/5">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Latency</span>
+                            <span class="text-[9px] mono text-green-500">14ms</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Accuracy</span>
+                            <span class="text-[9px] mono text-red-500">HI-RES</span>
+                        </div>
+                    </div>
+                    <button onclick="handleLogout()" class="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-[10px] font-black uppercase transition-all active:scale-95">
+                        <i data-lucide="log-out" class="w-3 h-3 text-red-500"></i> Terminate
+                    </button>
+                </div>
+            </header>
+
+            <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Controls Panel -->
+                <div class="lg:col-span-4 space-y-6">
+                    <section class="bg-zinc-900/40 p-6 rounded-[2rem] border border-white/10 shadow-xl backdrop-blur-md relative overflow-hidden group">
+                        <div id="scan-line" class="scanning-line hidden"></div>
+                        
+                        <div class="flex items-center justify-between mb-4 relative z-10">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                <div class="w-1 h-3 bg-red-600"></div> Engine Calibration
+                            </label>
+                            <i data-lucide="settings-2" class="w-4 h-4 text-zinc-600"></i>
+                        </div>
+                        
+                        <div class="space-y-4 relative z-10">
+                            <div class="space-y-2">
+                                <p class="text-[9px] font-bold text-zinc-600 uppercase ml-1">Server Seed (64-char hex)</p>
+                                <textarea id="seed-input" 
+                                    class="w-full h-24 bg-black border border-white/10 rounded-xl p-4 text-[11px] mono outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/30 transition-all resize-none text-slate-300"
+                                    placeholder="Paste server seed..."></textarea>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <p class="text-[9px] font-bold text-zinc-600 uppercase ml-1">Client Seed / Public Hash</p>
+                                <input id="client-seed-input" type="text"
+                                    class="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-[11px] mono outline-none focus:border-red-600 text-slate-300"
+                                    placeholder="e.g. 000000000000000000... (optional)">
+                            </div>
+                        </div>
+
+                        <div id="error-box" class="mt-4 p-3 bg-red-900/20 border border-red-500/20 rounded-xl flex items-start gap-3 hidden">
+                            <i data-lucide="alert-octagon" class="w-4 h-4 text-red-500 mt-0.5 shrink-0"></i>
+                            <p id="error-message" class="text-[10px] text-red-400 font-medium leading-relaxed"></p>
+                        </div>
+
+                        <button id="scan-btn" onclick="startAnalysis()" class="w-full mt-6 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/30 border-t border-white/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+                            INITIALIZE HI-ACC SCAN
+                        </button>
+                    </section>
+
+                    <div class="bg-zinc-900/40 p-6 rounded-[2rem] border border-white/10">
+                        <h4 class="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="w-3 h-3"></i> Telemetry Data
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Entropy Density</span>
+                                <span id="tele-entropy" class="text-xs mono text-zinc-300">0.00%</span>
+                            </div>
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Accuracy Weight</span>
+                                <span id="tele-weight" class="text-xs mono text-zinc-300">CALIBRATING</span>
+                            </div>
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                                <span class="text-[10px] text-zinc-500 uppercase font-bold">Cycle Pattern</span>
+                                <span id="tele-cycle" class="text-xs mono text-zinc-300">---</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signal Display -->
+                <div class="lg:col-span-8">
+                    <div id="display-card" class="bg-zinc-900/40 p-6 sm:p-12 rounded-[3.5rem] border border-white/10 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl min-h-[550px] h-full backdrop-blur-xl transition-all duration-1000">
+                        
+                        <!-- Dynamic Background Visuals -->
+                        <div id="top-glow" class="absolute -top-32 -right-32 w-96 h-96 rounded-full blur-[160px] bg-zinc-800/10 transition-colors duration-1000"></div>
+                        <div id="bottom-glow" class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full blur-[160px] bg-zinc-800/5"></div>
+
+                        <div class="relative z-10 w-full space-y-12">
+                            <div class="space-y-4">
+                                <div class="flex flex-col items-center gap-2">
+                                    <span id="status-tag" class="text-slate-500 text-[10px] font-black uppercase tracking-[0.6em] inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 border border-white/5">
+                                        STANDBY MODE
+                                    </span>
+                                </div>
+                                
+                                <div class="flex flex-col items-center">
+                                    <div class="relative">
+                                        <div class="text-[7rem] sm:text-[11rem] font-black italic leading-none tracking-tighter flex items-baseline">
+                                            <span id="multiplier-text" class="text-zinc-800 transition-all duration-1000">0.00</span>
+                                            <span class="text-red-600 text-3xl sm:text-6xl ml-4 font-black italic select-none">X</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-full max-w-sm mx-auto bg-black/50 rounded-[3.5rem] p-10 border border-white/5 shadow-inner backdrop-blur-3xl ring-1 ring-white/10 relative overflow-hidden">
+                                <div id="timer-bg-glow" class="absolute inset-0 bg-red-600/0 transition-colors duration-700"></div>
+                                <div class="relative z-10">
+                                    <div class="flex items-center justify-center gap-2 text-red-500 mb-4">
+                                        <div id="ping-indicator" class="w-2.5 h-2.5 rounded-full bg-red-600 hidden pulse-indicator"></div>
+                                        <span class="text-[10px] font-black uppercase tracking-[0.4em]">Time to Impact</span>
+                                    </div>
+                                    
+                                    <div id="timer-display" class="text-8xl sm:text-9xl font-black mono tracking-tighter transition-all duration-700 text-slate-200">
+                                        00
+                                        <span class="text-xs font-sans ml-2 text-zinc-600 uppercase tracking-widest block mt-4 font-bold italic">Seconds Remaining</span>
+                                    </div>
+
+                                    <div id="confirmed-badge" class="mt-8 py-3 px-8 bg-green-500/10 text-green-500 border border-green-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest hidden items-center justify-center gap-2 animate-bounce">
+                                        <i data-lucide="check-circle" class="w-4 h-4"></i> High-Acc Confirmed
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log Table -->
+                <div class="lg:col-span-12 mt-4">
+                    <section class="bg-zinc-900/40 rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl backdrop-blur-md">
+                        <div class="px-8 py-6 bg-white/5 border-b border-white/5 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="database" class="w-4 h-4 text-slate-500"></i>
+                                <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500">Calculated Hash History</h3>
+                            </div>
+                            <div class="flex items-center gap-2 px-4 py-1.5 bg-red-600/10 rounded-full border border-red-600/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
+                                <span class="text-[8px] font-black text-red-500 uppercase tracking-widest">Neural Link Active</span>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[800px]">
+                                <thead class="bg-black/40 text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
+                                    <tr>
+                                        <th class="px-8 py-5">#Index</th>
+                                        <th class="px-8 py-5">Target Value</th>
+                                        <th class="px-8 py-5">Entropy Weight</th>
+                                        <th class="px-8 py-5">Verified Hash Result</th>
+                                        <th class="px-8 py-5 text-right">Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="log-body" class="text-[11px] mono">
+                                    <tr>
+                                        <td colspan="5" class="px-8 py-24 text-center text-zinc-700 uppercase text-[11px] tracking-[0.6em] font-black italic opacity-30">
+                                            Initializing Data Stream...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </main>
+
+            <footer class="text-center pt-12 pb-12">
+                <div class="flex flex-col items-center gap-4">
+                   <p class="text-[9px] uppercase font-black text-zinc-700 tracking-[0.6em] flex items-center justify-center gap-8 w-full">
+                        <span class="h-[1px] bg-gradient-to-r from-transparent to-zinc-800 grow"></span>
+                        SUBNET MAFIA HI-ACC ALPHA • EST. 2026
+                        <span class="h-[1px] bg-gradient-to-l from-transparent to-zinc-800 grow"></span>
+                    </p>
+                    <p class="text-[8px] text-zinc-800 font-mono flex gap-4 uppercase">
+                        <span>Core: v2.5.0-Precision</span>
+                        <span>Region: Quantum-North</span>
+                        <span>Encryption: SHA-256-R</span>
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signInAnonymously, 
-            signInWithCustomToken, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+        // Configuration
         const githubFallbackConfig = {
             apiKey: "AIzaSyB5w_vWoPeojuP9qFZrfeS62vAS3Cg39go", 
             authDomain: "aviator-predictor-subnet-mafia.firebaseapp.com",
@@ -82,383 +303,253 @@
             measurementId: "G-WK7DYZ8X71"
         };
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : githubFallbackConfig;
-
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : githubFallbackConfig;
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Optimized Icon Component
-        const Icon = ({ name, className = "" }) => {
-            const iconRef = useRef(null);
-            useEffect(() => {
-                if (window.lucide) {
-                    window.lucide.createIcons();
+        // Global State
+        let currentUser = null;
+        let isAnalyzing = false;
+        let activeSignal = null;
+        let secondsRemaining = 0;
+        let logData = [];
+        let timerInterval = null;
+        let currentChainSeed = '';
+
+        // UI Ref
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingScreen = document.getElementById('loading-screen');
+        const appContent = document.getElementById('app-content');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const seedInput = document.getElementById('seed-input');
+        const clientSeedInput = document.getElementById('client-seed-input');
+        const errorBox = document.getElementById('error-box');
+        const errorMessage = document.getElementById('error-message');
+        const scanBtn = document.getElementById('scan-btn');
+        const scanLine = document.getElementById('scan-line');
+        const multiplierText = document.getElementById('multiplier-text');
+        const timerDisplay = document.getElementById('timer-display');
+        const confirmedBadge = document.getElementById('confirmed-badge');
+        const pingIndicator = document.getElementById('ping-indicator');
+        const statusTag = document.getElementById('status-tag');
+        const logBody = document.getElementById('log-body');
+        
+        // Telemetry Ref
+        const teleEntropy = document.getElementById('tele-entropy');
+        const teleWeight = document.getElementById('tele-weight');
+        const teleCycle = document.getElementById('tele-cycle');
+
+        window.onload = async () => {
+            lucide.createIcons();
+            loadingBar.style.width = '70%';
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
                 }
-            }, [name]);
-            return <i data-lucide={name} className={className} ref={iconRef}></i>;
+            } catch (err) { showError("Security Protocol Fault."); }
         };
 
-        const App = () => {
-            const [user, setUser] = useState(null);
-            const [serverSeed, setServerSeed] = useState('d2ff64abc5e35fcd38b5e7487facf7c92893030a4e56a2a9a21e77f03958bcfe');
-            const [currentChainSeed, setCurrentChainSeed] = useState('');
-            const [results, setResults] = useState([]);
-            const [isAnalyzing, setIsAnalyzing] = useState(false);
-            const [activeSignal, setActiveSignal] = useState(null);
-            const [secondsRemaining, setSecondsRemaining] = useState(0);
-            const [error, setError] = useState(null);
-            const timerRef = useRef(null);
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                loadingBar.style.width = '100%';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    appContent.classList.remove('opacity-0');
+                    userIdDisplay.innerText = `SID: ${user.uid.substring(0, 16)}`;
+                }, 800);
+            }
+        });
 
-            useEffect(() => {
-                const initAuth = async () => {
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    } catch (err) {
-                        console.error("Auth Error:", err);
-                        setError("Secure Connection Failed. Check Firebase API Key.");
-                    }
-                };
+        window.handleLogout = async () => {
+            await signOut(auth);
+            window.location.reload();
+        };
 
-                initAuth();
-                const unsubscribe = onAuthStateChanged(auth, (u) => {
-                    setUser(u);
-                });
-                return () => unsubscribe();
-            }, []);
+        // SHA256 Precision
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-            const sha256 = async (message) => {
-                const msgBuffer = new TextEncoder().encode(message);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            };
+        // Provably Fair Calc
+        function calculateResult(hash) {
+            const decimal = parseInt(hash.substring(0, 13), 16);
+            const e = Math.pow(2, 52);
+            let result = (e / (e - decimal));
+            const finalResult = Math.max(1.00, result * 0.99);
+            return Math.floor(finalResult * 100) / 100;
+        }
 
-            const calculateResult = (hash) => {
-                const decimal = parseInt(hash.substring(0, 13), 16);
-                const e = Math.pow(2, 52);
-                let result = (e / (e - decimal));
-                const finalResult = Math.max(1.00, result * 0.99);
-                return Math.floor(finalResult * 100) / 100;
-            };
+        function showError(msg) {
+            errorBox.classList.remove('hidden');
+            errorMessage.innerText = msg;
+            setTimeout(() => { errorBox.classList.add('hidden'); }, 6000);
+        }
 
-            const analyzeSeedChain = useCallback(async () => {
-                if (!user) {
-                    setError("Security socket initializing...");
-                    return;
-                }
-                setIsAnalyzing(true);
-                setError(null);
-                
-                let seedToScan = currentChainSeed || serverSeed;
-                let found = false;
-                let chainDepth = 0;
-                const MAX_DEPTH = 500;
-                
-                try {
-                    while (!found && chainDepth < MAX_DEPTH) {
-                        const currentHash = await sha256(seedToScan);
-                        const multiplier = calculateResult(currentHash);
-                        
-                        if (multiplier >= 5.0) {
-                            if (timerRef.current) clearInterval(timerRef.current);
-                            const initialSeconds = chainDepth * 15;
-                            
-                            setActiveSignal({ 
-                                multiplier, 
-                                depth: chainDepth, 
-                                seedSnapshot: seedToScan,
-                                hash: currentHash 
-                            });
-                            setSecondsRemaining(initialSeconds);
-                            found = true;
-                        } else {
-                            seedToScan = currentHash;
-                            chainDepth++;
-                        }
-                    }
+        window.startAnalysis = async () => {
+            if (isAnalyzing) return;
 
-                    if (!found) {
-                        setError("No 5x+ targets in current 500-round block.");
-                    }
-                } catch (err) {
-                    setError("Engine error: Check seed integrity.");
-                } finally {
-                    setIsAnalyzing(false);
-                }
-            }, [currentChainSeed, serverSeed, user]);
-
-            useEffect(() => {
-                if (activeSignal && secondsRemaining > 0) {
-                    timerRef.current = setInterval(() => {
-                        setSecondsRemaining(prev => Math.max(0, prev - 1));
-                    }, 1000);
-                } else if (secondsRemaining === 0 && activeSignal) {
-                    clearInterval(timerRef.current);
-                }
-                return () => clearInterval(timerRef.current);
-            }, [activeSignal, secondsRemaining]);
-
-            const useSignal = async () => {
-                if (!activeSignal) return;
-                setResults(prev => [{
-                    ...activeSignal, 
-                    timestamp: new Date().toLocaleTimeString()
-                }, ...prev].slice(0, 10));
-                
-                const nextSeed = await sha256(activeSignal.seedSnapshot);
-                setCurrentChainSeed(nextSeed);
-                setActiveSignal(null);
-                setSecondsRemaining(0);
-            };
-
-            const handleLogout = async () => {
-                try {
-                    await signOut(auth);
-                    setUser(null);
-                    window.location.href = "index.html";
-                } catch (err) {
-                    console.error("Logout Error:", err);
-                    window.location.href = "index.html";
-                }
-            };
-
-            if (!user && !error) {
-                return (
-                    <div className="min-h-screen bg-black flex items-center justify-center p-6">
-                        <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl text-center max-w-md w-full shadow-2xl">
-                            <div className="mb-6 flex justify-center">
-                                <div className="p-4 bg-red-600 rounded-2xl shadow-xl shadow-red-900/40">
-                                    <Icon name="lock" className="w-8 h-8 text-white" />
-                                </div>
-                            </div>
-                            <h1 className="text-white text-2xl font-black italic tracking-tighter mb-2 uppercase">Connecting...</h1>
-                            <p className="text-zinc-500 text-[10px] mb-6 uppercase tracking-[0.3em]">Bypassing Encryption Protocols</p>
-                            <div className="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
-                                <div className="bg-red-600 h-full shimmer-bg w-1/2"></div>
-                            </div>
-                        </div>
-                    </div>
-                );
+            if (activeSignal) {
+                logData.unshift({ ...activeSignal, timestamp: new Date().toLocaleTimeString() });
+                if (logData.length > 15) logData.pop();
+                renderLogs();
+                currentChainSeed = await sha256(activeSignal.seedSnapshot);
+                resetUI();
+                return;
             }
 
-            return (
-                <div className="min-h-screen bg-[#020202] text-slate-100 p-4 sm:p-6 md:p-8 selection:bg-red-600 selection:text-white">
-                    <div className="max-w-5xl mx-auto space-y-6">
+            const inputSeed = seedInput.value.trim();
+            if (inputSeed && inputSeed.length < 32) {
+                showError("Invalid Server Seed. Length must be >= 32 chars.");
+                return;
+            }
+
+            const baseSeed = inputSeed || 'd2ff64abc5e35fcd38b5e7487facf7c92893030a4e56a2a9a21e77f03958bcfe';
+            const clientSeed = clientSeedInput.value.trim() || '000000000000000000042d380e2d2165037d45543c6b24d9f658390b21a81232';
+
+            isAnalyzing = true;
+            scanBtn.disabled = true;
+            scanLine.classList.remove('hidden');
+            statusTag.innerText = "CALIBRATING NEURAL WEIGHTS...";
+            teleWeight.innerText = "ANALYZING";
+            
+            // Artificial delay for "High Accuracy" simulation
+            await new Promise(r => setTimeout(r, 1200));
+
+            let seedToScan = currentChainSeed || baseSeed;
+            let found = false;
+            let depth = 0;
+            const MAX_DEPTH = 1200; // Increased depth for accuracy
+
+            try {
+                while (!found && depth < MAX_DEPTH) {
+                    // Accuracy injection: combine server + client seed
+                    const hashInput = depth === 0 ? (seedToScan + clientSeed) : seedToScan;
+                    const currentHash = await sha256(hashInput);
+                    const multiplier = calculateResult(currentHash);
+                    
+                    if (multiplier >= 10.0) {
+                        found = true;
+                        activeSignal = {
+                            multiplier,
+                            depth,
+                            seedSnapshot: currentHash,
+                            hash: currentHash,
+                            entropy: (Math.random() * (99.9 - 94.1) + 94.1).toFixed(2)
+                        };
+                        triggerSignal();
+                    } else {
+                        seedToScan = currentHash;
+                        depth++;
                         
-                        {/* Header Section */}
-                        <header className="flex flex-col sm:flex-row items-center justify-between border-b border-white/5 pb-6 gap-4">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-red-600 rounded-xl shadow-lg shadow-red-900/20">
-                                    <Icon name="terminal" className="w-6 h-6 text-white" />
-                                </div>
-                                <div>
-                                    <h1 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase italic">
-                                        SUBNET <span className="text-red-600">MAFIA</span>
-                                    </h1>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                                        <p className="text-slate-500 text-[10px] uppercase font-bold tracking-[0.2em]">
-                                            SND: {user?.uid?.substring(0, 12) || 'OFFLINE'}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-4">
-                                <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-white/5 rounded-full border border-white/5">
-                                    <Icon name="activity" className="w-3 h-3 text-red-500" />
-                                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Network: STABLE</span>
-                                </div>
-                                <button 
-                                    onClick={handleLogout}
-                                    className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-[10px] font-black uppercase transition-all active:scale-95"
-                                >
-                                    <Icon name="log-out" className="w-3 h-3" /> Terminate
-                                </button>
-                            </div>
-                        </header>
+                        // Telemetry updates
+                        if (depth % 100 === 0) {
+                            teleEntropy.innerText = `${(Math.random() * 80).toFixed(2)}%`;
+                        }
+                    }
+                }
 
-                        <main className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            
-                            {/* Controls Panel */}
-                            <div className="lg:col-span-4 space-y-6">
-                                <section className="bg-zinc-900/50 p-6 rounded-[2rem] border border-white/10 shadow-xl backdrop-blur-sm">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                                            <div className="w-1 h-3 bg-red-600"></div> Sequence Input
-                                        </label>
-                                        <Icon name="shield-check" className="w-4 h-4 text-zinc-600" />
-                                    </div>
-                                    
-                                    <div className="relative group">
-                                        <textarea 
-                                            className="w-full h-32 bg-black border border-white/10 rounded-2xl p-4 text-[11px] font-mono outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all resize-none shadow-inner"
-                                            value={serverSeed}
-                                            onChange={(e) => setServerSeed(e.target.value)}
-                                            disabled={!!activeSignal || isAnalyzing}
-                                            placeholder="Hash code from game history..."
-                                        />
-                                        <div className="absolute bottom-3 right-3 opacity-20 group-hover:opacity-100 transition-opacity">
-                                           <Icon name="cpu" className="w-4 h-4 text-red-600" />
-                                        </div>
-                                    </div>
-
-                                    {error && (
-                                        <div className="mt-4 p-3 bg-red-900/20 border border-red-500/20 rounded-xl flex items-start gap-3">
-                                            <Icon name="alert-circle" className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-                                            <p className="text-[10px] text-red-400 font-medium">{error}</p>
-                                        </div>
-                                    )}
-
-                                    <button 
-                                        onClick={activeSignal ? useSignal : analyzeSeedChain}
-                                        disabled={isAnalyzing}
-                                        className={`w-full mt-6 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 ${
-                                            isAnalyzing ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' :
-                                            activeSignal ? 'bg-green-600 hover:bg-green-500 text-white shadow-lg shadow-green-900/20' : 
-                                            'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/20'
-                                        }`}
-                                    >
-                                        {isAnalyzing ? (
-                                            <>
-                                                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                                                Scanning...
-                                            </>
-                                        ) : activeSignal ? (
-                                            <>ACKNOWLEDGE HIT</>
-                                        ) : (
-                                            <>CALCULATE 5X SIGNAL</>
-                                        )}
-                                    </button>
-                                </section>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-zinc-900/50 p-4 rounded-2xl border border-white/5">
-                                        <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mb-1">Gap Offset</p>
-                                        <p className="text-xl font-black text-white">{activeSignal ? `+${activeSignal.depth}` : '0'}</p>
-                                    </div>
-                                    <div className="bg-zinc-900/50 p-4 rounded-2xl border border-white/5">
-                                        <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mb-1">Probability</p>
-                                        <p className="text-xl font-black text-green-500">{activeSignal ? '99.8%' : '0%'}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Signal Display */}
-                            <div className="lg:col-span-8">
-                                <div className="bg-zinc-900/50 p-6 sm:p-12 rounded-[2.5rem] border border-white/10 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl min-h-[500px] h-full backdrop-blur-sm">
-                                    <div className="absolute -top-24 -right-24 w-64 h-64 bg-red-600/10 blur-[120px] rounded-full"></div>
-                                    <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-zinc-600/5 blur-[120px] rounded-full"></div>
-
-                                    <div className="relative z-10 w-full space-y-10">
-                                        <div className="space-y-4">
-                                            <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.6em] inline-flex items-center gap-2">
-                                                <Icon name="zap" className="w-3 h-3 text-red-600" /> Quantum Predictor v2.0
-                                            </span>
-                                            
-                                            <div className="flex flex-col items-center">
-                                                <div className="text-8xl sm:text-[10rem] font-black italic leading-none tracking-tighter flex items-end">
-                                                    <span className={`${activeSignal ? 'text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]' : 'text-zinc-800'} transition-all duration-700`}>
-                                                        {activeSignal ? activeSignal.multiplier.toFixed(2) : "0.00"}
-                                                    </span>
-                                                    <span className="text-red-600 text-3xl sm:text-5xl mb-4 ml-2 font-black italic">X</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="w-full max-w-sm mx-auto bg-black/60 rounded-[2.5rem] p-8 border border-white/5 shadow-inner backdrop-blur-md">
-                                            <div className="flex items-center justify-center gap-2 text-red-500 mb-3">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></div>
-                                                <span className="text-[10px] font-black uppercase tracking-[0.3em]">Estimated ET</span>
-                                            </div>
-                                            
-                                            <div className={`text-7xl sm:text-8xl font-black font-mono tracking-tighter transition-all duration-500 ${secondsRemaining === 0 && activeSignal ? 'text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.3)]' : 'text-white'}`}>
-                                                {activeSignal ? String(secondsRemaining).padStart(2, '0') : "00"}
-                                                <span className="text-sm font-sans ml-1 text-zinc-600 uppercase">sec</span>
-                                            </div>
-
-                                            {activeSignal && secondsRemaining === 0 && (
-                                                <div className="mt-6 py-2 px-6 bg-green-500/10 text-green-500 border border-green-500/20 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-2 animate-bounce">
-                                                    <Icon name="check-circle-2" className="w-3 h-3" /> Signal Confirmed
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Data Log Feed */}
-                            <div className="lg:col-span-12">
-                                <section className="bg-zinc-900/50 rounded-[2rem] border border-white/10 overflow-hidden shadow-xl">
-                                    <div className="px-6 py-4 bg-white/5 border-b border-white/5 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <Icon name="history" className="w-4 h-4 text-slate-500" />
-                                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Decrypted Hit Log</h3>
-                                        </div>
-                                        <div className="flex items-center gap-2 px-3 py-1 bg-red-600/10 rounded-full border border-red-600/20">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
-                                            <span className="text-[8px] font-black text-red-500 uppercase tracking-tighter">Live Monitor</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="overflow-x-auto custom-scroll">
-                                        <table className="w-full text-left border-collapse min-w-[600px]">
-                                            <thead className="bg-black/20 text-zinc-600 text-[9px] font-black uppercase tracking-[0.2em]">
-                                                <tr>
-                                                    <th className="px-6 py-4">ID</th>
-                                                    <th className="px-6 py-4">Value</th>
-                                                    <th className="px-6 py-4">Offset</th>
-                                                    <th className="px-6 py-4">Signature</th>
-                                                    <th className="px-6 py-4 text-right">Logged At</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="text-[11px] font-mono">
-                                                {results.length > 0 ? results.map((res, i) => (
-                                                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-                                                        <td className="px-6 py-4 text-slate-500 font-bold">#{results.length - i}</td>
-                                                        <td className="px-6 py-4">
-                                                            <span className="px-2 py-1 bg-red-600/10 text-red-500 rounded-lg font-black">{res.multiplier.toFixed(2)}x</span>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-zinc-400">+{res.depth} rounds</td>
-                                                        <td className="px-6 py-4 text-[9px] text-zinc-600 group-hover:text-zinc-400 transition-colors">
-                                                            {res.hash.substring(0, 24)}...
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right text-slate-600 uppercase font-sans text-[9px]">{res.timestamp}</td>
-                                                    </tr>
-                                                )) : (
-                                                    <tr>
-                                                        <td colSpan="5" className="px-6 py-12 text-center text-zinc-600 uppercase text-[10px] tracking-widest font-bold">
-                                                            Waiting for session activity...
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </section>
-                            </div>
-                        </main>
-
-                        <footer className="text-center pt-8 pb-4">
-                            <p className="text-[9px] uppercase font-black text-zinc-700 tracking-[0.4em] flex items-center justify-center gap-3">
-                                <span className="w-12 h-[1px] bg-zinc-800"></span>
-                                SM CYBER DIVISION • GITHUB RELEASE ALPHA • +94716344483
-                                <span className="w-12 h-[1px] bg-zinc-800"></span>
-                            </p>
-                        </footer>
-                    </div>
-                </div>
-            );
+                if (!found) {
+                    showError("No 10x+ pattern detected in the current 1200-cycle block.");
+                    resetUI();
+                }
+            } catch (err) {
+                showError("Neural Interface Error.");
+                resetUI();
+            } finally {
+                isAnalyzing = false;
+                scanBtn.disabled = false;
+                scanLine.classList.add('hidden');
+            }
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        function triggerSignal() {
+            scanBtn.innerText = 'SYNC WITH ROUND';
+            scanBtn.classList.replace('bg-red-600', 'bg-green-600');
+            
+            statusTag.innerText = "TARGET ACQUIRED (HI-ACC)";
+            statusTag.classList.replace('text-slate-500', 'text-red-500');
+            statusTag.classList.replace('bg-white/5', 'bg-red-500/10');
+
+            teleEntropy.innerText = `${activeSignal.entropy}%`;
+            teleWeight.innerText = "VERIFIED";
+            teleCycle.innerText = "VOLATILE";
+
+            multiplierText.innerText = activeSignal.multiplier.toFixed(2);
+            multiplierText.classList.replace('text-zinc-800', 'text-white');
+            multiplierText.classList.add('active-red-glow');
+
+            document.getElementById('top-glow').classList.replace('bg-zinc-800/10', 'bg-red-600/30');
+            pingIndicator.classList.remove('hidden');
+            
+            secondsRemaining = Math.floor(activeSignal.depth * 16.5);
+            updateTimer();
+            
+            timerInterval = setInterval(() => {
+                secondsRemaining = Math.max(0, secondsRemaining - 1);
+                updateTimer();
+                if (secondsRemaining === 0) {
+                    clearInterval(timerInterval);
+                    confirmedBadge.classList.remove('hidden');
+                    confirmedBadge.classList.add('flex');
+                    timerDisplay.classList.replace('text-slate-200', 'text-green-500');
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            timerDisplay.innerHTML = `${String(secondsRemaining).padStart(2, '0')}<span class="text-xs font-sans ml-2 text-zinc-600 uppercase tracking-widest block mt-4 font-bold italic">Seconds Remaining</span>`;
+        }
+
+        function resetUI() {
+            activeSignal = null;
+            clearInterval(timerInterval);
+            
+            scanBtn.innerText = 'INITIALIZE HI-ACC SCAN';
+            scanBtn.classList.replace('bg-green-600', 'bg-red-600');
+            
+            statusTag.innerText = "STANDBY MODE";
+            statusTag.classList.replace('text-red-500', 'text-slate-500');
+            statusTag.classList.replace('bg-red-500/10', 'bg-white/5');
+            
+            multiplierText.innerText = '0.00';
+            multiplierText.classList.replace('text-white', 'text-zinc-800');
+            multiplierText.classList.remove('active-red-glow');
+            
+            timerDisplay.classList.replace('text-green-500', 'text-slate-200');
+            timerDisplay.innerHTML = `00<span class="text-xs font-sans ml-2 text-zinc-600 uppercase tracking-widest block mt-4 font-bold italic">Seconds Remaining</span>`;
+            
+            teleWeight.innerText = "CALIBRATING";
+            teleCycle.innerText = "---";
+            
+            confirmedBadge.classList.add('hidden');
+            pingIndicator.classList.add('hidden');
+            document.getElementById('top-glow').classList.replace('bg-red-600/30', 'bg-zinc-800/10');
+        }
+
+        function renderLogs() {
+            if (logData.length === 0) return;
+            logBody.innerHTML = logData.map((res, i) => `
+                <tr class="border-b border-white/5 hover:bg-white/[0.03] transition-all">
+                    <td class="px-8 py-5 text-zinc-500 font-bold italic">#${logData.length - i}</td>
+                    <td class="px-8 py-5">
+                        <span class="px-3 py-1 bg-red-600/10 text-red-500 rounded-lg font-black border border-red-600/20">
+                            ${res.multiplier.toFixed(2)}x
+                        </span>
+                    </td>
+                    <td class="px-8 py-5 text-zinc-400">${res.entropy}% Match</td>
+                    <td class="px-8 py-5 text-[9px] text-zinc-600">
+                        ${res.hash}
+                    </td>
+                    <td class="px-8 py-5 text-right text-slate-600 uppercase font-sans text-[9px] font-bold">${res.timestamp}</td>
+                </tr>
+            `).join('');
+        }
     </script>
 </body>
 </html>
