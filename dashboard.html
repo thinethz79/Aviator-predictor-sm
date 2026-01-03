@@ -110,11 +110,11 @@
                     <div class="hidden lg:flex items-center gap-6 px-6 py-2 bg-white/5 rounded-full border border-white/5">
                         <div class="flex items-center gap-2">
                             <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Latency</span>
-                            <span class="text-[9px] mono text-green-500">14ms</span>
+                            <span class="text-[9px] mono text-green-500">11ms</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Accuracy</span>
-                            <span class="text-[9px] mono text-red-500">HI-RES</span>
+                            <span class="text-[9px] mono text-red-500">5X_PRECISION</span>
                         </div>
                     </div>
                     <button onclick="handleLogout()" class="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-[10px] font-black uppercase transition-all active:scale-95">
@@ -159,7 +159,7 @@
                         </div>
 
                         <button id="scan-btn" onclick="startAnalysis()" class="w-full mt-6 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/30 border-t border-white/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
-                            INITIALIZE HI-ACC SCAN
+                            INITIALIZE 5X HI-ACC SCAN
                         </button>
                     </section>
 
@@ -424,7 +424,7 @@
             let seedToScan = currentChainSeed || baseSeed;
             let found = false;
             let depth = 0;
-            const MAX_DEPTH = 1200; // Increased depth for accuracy
+            const MAX_DEPTH = 1200; 
 
             try {
                 while (!found && depth < MAX_DEPTH) {
@@ -433,14 +433,15 @@
                     const currentHash = await sha256(hashInput);
                     const multiplier = calculateResult(currentHash);
                     
-                    if (multiplier >= 10.0) {
+                    // TARGET: 5.0x or higher
+                    if (multiplier >= 5.0) {
                         found = true;
                         activeSignal = {
                             multiplier,
                             depth,
                             seedSnapshot: currentHash,
                             hash: currentHash,
-                            entropy: (Math.random() * (99.9 - 94.1) + 94.1).toFixed(2)
+                            entropy: (Math.random() * (99.9 - 96.4) + 96.4).toFixed(2)
                         };
                         triggerSignal();
                     } else {
@@ -455,7 +456,7 @@
                 }
 
                 if (!found) {
-                    showError("No 10x+ pattern detected in the current 1200-cycle block.");
+                    showError("No 5x+ pattern detected in the current 1200-cycle block.");
                     resetUI();
                 }
             } catch (err) {
@@ -472,13 +473,13 @@
             scanBtn.innerText = 'SYNC WITH ROUND';
             scanBtn.classList.replace('bg-red-600', 'bg-green-600');
             
-            statusTag.innerText = "TARGET ACQUIRED (HI-ACC)";
+            statusTag.innerText = "TARGET ACQUIRED (5X HI-ACC)";
             statusTag.classList.replace('text-slate-500', 'text-red-500');
             statusTag.classList.replace('bg-white/5', 'bg-red-500/10');
 
             teleEntropy.innerText = `${activeSignal.entropy}%`;
             teleWeight.innerText = "VERIFIED";
-            teleCycle.innerText = "VOLATILE";
+            teleCycle.innerText = "BALANCED";
 
             multiplierText.innerText = activeSignal.multiplier.toFixed(2);
             multiplierText.classList.replace('text-zinc-800', 'text-white');
@@ -487,7 +488,8 @@
             document.getElementById('top-glow').classList.replace('bg-zinc-800/10', 'bg-red-600/30');
             pingIndicator.classList.remove('hidden');
             
-            secondsRemaining = Math.floor(activeSignal.depth * 16.5);
+            // Adjusted timing estimation for 5x targets
+            secondsRemaining = Math.floor(activeSignal.depth * 14.5);
             updateTimer();
             
             timerInterval = setInterval(() => {
@@ -510,7 +512,7 @@
             activeSignal = null;
             clearInterval(timerInterval);
             
-            scanBtn.innerText = 'INITIALIZE HI-ACC SCAN';
+            scanBtn.innerText = 'INITIALIZE 5X HI-ACC SCAN';
             scanBtn.classList.replace('bg-green-600', 'bg-red-600');
             
             statusTag.innerText = "STANDBY MODE";
